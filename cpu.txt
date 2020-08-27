@@ -1,0 +1,25 @@
+rds050a021 rdwsmpd01 $cat cputest_SiteA_MS1.sh
+#!/bin/ksh
+#set -x
+
+HOST=`hostname`
+IP=`ifconfig -a | tail -1 | awk {'print $2'}`
+TEMP_FILE="/wls_domains/rdwsmpd01/SCRIPTS/highcpu/HIGHCPU_rds050a021"
+if [ test -a ${TEMP_FILE} ]
+then
+rm ${TEMP_FILE}
+fi
+
+for i in `prstat -Z 2 5 | grep rds050a021 | awk '{print $7}'|sed 's/%//g'`
+do
+   echo "CPU is :$i"
+   if [ $i -ge 15 ];
+   then
+   echo "CPU Utilization is $i on $IP.Please take action" > /wls_domains/rdwsmpd01/SCRIPTS/highcpu/HIGHCPU_$HOST
+   fi
+done
+
+if [ -e ${TEMP_FILE} ]
+then
+cat ${TEMP_FILE} | mailx -s "HIGH CPU UTILIZATION ON 10.187.42.97" nagapriya.govindarajulu@bt.com anil.m.reddy@bt.com boopalan.thangaraj@bt.com naveenkumar.kothari@bt.com lalitkanta.mishra@bt.com hclcopasg@bt.com
+fi
