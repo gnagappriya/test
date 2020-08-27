@@ -1,0 +1,25 @@
+
+#!/bin/ksh
+#set -x
+
+HOST=`hostname`
+IP=`ifconfig -a | tail -1 | awk {'print $2'}`
+TEMP_FILE="/wls_domains/rsadda/SCRIPTS/highcpu/HIGHCPU_rsadaa"
+if [ test -a ${TEMP_FILE} ]
+then
+rm ${TEMP_FILE}
+fi
+
+for i in `prstat -Z 2 5 | grep rdasdasd | awk '{print $7}'|sed 's/%//g'`
+do
+   echo "CPU is :$i"
+   if [ $i -ge 15 ];
+   then
+   echo "CPU Utilization is $i on $IP.Please take action" > /wls_domains/rdwsasdasd/SCRIPTS/highcpu/HIGHCPU_$HOST
+   fi
+done
+
+if [ -e ${TEMP_FILE} ]
+then
+cat ${TEMP_FILE} | mailx -s "HIGH CPU UTILIZATION ON 10.7.2.7" test@test.com
+fi
